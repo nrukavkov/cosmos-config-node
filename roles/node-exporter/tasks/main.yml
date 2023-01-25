@@ -1,0 +1,108 @@
+---
+- name: Create node_exporter group
+  group:
+    name: node_exporter
+    system: yes
+    state: present
+
+- name: Create node_exporter user
+  user:
+    name: node_exporter
+    group: node_exporter
+    append: no
+    shell: /bin/bash
+    system: yes
+    state: present
+
+- name: Add chain user to group node_exporter
+  user:
+    name: "{{node_user}}"
+    append: true
+    groups: adm,node_exporter
+    shell: /bin/bash
+
+- name: Get latest release URL
+  github_release:
+    user: prometheus
+    repo: node_exporter
+    action: latest_release
+  register: node_exporter_latest
+
+- name: Download Node Exporter
+  unarchive:
+    src: https://github.com/prometheus/node_exporter/releases/download/{{ node_exporter_latest['tag'] }}/node_exporter-{{ node_exporter_latest['tag'] | regex_replace('^v','') }}.linux-amd64.tar.gz
+    dest: /opt/
+    remote_src: yes
+
+- name: Create link to Node Exporter version
+  file:
+    src: /opt/node_exporter-{{ node_exporter_latest['tag'] | regex_replace('^v','') }}.linux-amd64
+    dest: /opt/node_exporter
+    state: link
+
+- name: Create directory /opt/node_exporter/textfiles
+  file:
+    path: /opt/node_exporter/textfiles/
+    state: directory
+    mode: '0770'
+    owner: node_exporter
+    group: node_exporter
+
+- name: Chown /opt/node_exporter to node_exporter
+  file:
+    path: /opt/node_exporter
+    state: directory
+    owner: node_exporter
+    group: node_exporter
+    mode: '0770'
+    recurse: yes
+
+- name: Install crontab for monitoring .gaia - SIZE_FOLDER_GAIA
+  cron:
+    name: monitoring-gaia-disksize
+    job: echo SIZE_FOLDER_GAIA{src=\"{{chain_home}}\"} $(du --max-depth=1 {{chain_home}} | tail -n 1 | awk '{print $1}') > /opt/node_exporter/textfiles/SIZE_FOLDER_GAIA.prom
+    minute: "*/1"
+    user: root
+
+- name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_HEIGHT
+  cron:
+    name: monitoring-gaia-block-height
+    job: echo SYNC_INFO_LATEST_BLOCK_HEIGHT $(gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_height') > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_HEIGHT.prom
+    minute: "*/1"
+    user: gaia
+
+- name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_TIME
+  cron:
+    name: monitoring-gaia-block-time
+    job: echo SYNC_INFO_LATEST_BLOCK_TIME $(TEST=`gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_time'` && echo $(date -d "$TEST" +%s)) > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_TIME.prom
+    minute: "*/1"
+    user: gaia
+
+- name: Install crontab for monitoring .gaia - SYNC_INFO_PEER_COUNT
+  cron:
+    name: monitoring-gaia-peer-count
+    job: echo SYNC_INFO_PEER_COUNT $(curl -s "http://localhost:26657/net_info" | jq -r '.result.peers | length') > /opt/node_exporter/textfiles/SYNC_INFO_PEER_COUNT.prom
+    minute: "*/1"
+    user: gaia
+
+- name: Install node_exporter systemd service
+  template:
+    src: node_exporter.service.j2
+    dest: /etc/systemd/system/node_exporter.service
+    mode: 0644
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Enable and start node_exporter service
+  systemd:
+    name: node_exporter
+    enabled: yes
+    state: started
+  
+- name: Enable external connections
+  community.general.ufw:
+    rule: allow
+    port: '{{ node_exporter_port }}'
+    proto: tcp

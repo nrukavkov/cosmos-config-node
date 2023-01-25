@@ -1,0 +1,6 @@
+---
+- name: Setup node-exporter
+  include_role:
+    name: node-exporter
+  when: monitoring_prometheus | default(false) | bool
+

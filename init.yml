@@ -1,0 +1,7 @@
+---
+# Configure a chain node
+- hosts: node
+  become: true
+  roles:
+    - { role: ssh-permissions, ssh_username: "{{ ansible_new_user }}", ssh_publickey: "{{ ansible_public_key }}" }
+    - ssh-secure

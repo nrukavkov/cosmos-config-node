@@ -1,0 +1,76 @@
+---
+- name: Copy sshd config
+  template:
+    src: sshd_config.j2
+    dest: '/etc/ssh/sshd_config'
+  notify:
+    - reload sshd
+
+- name: Allow all access to ssh port
+  community.general.ufw:
+    rule: allow
+    port: '{{ ansible_new_port }}'
+    proto: tcp
+
+- name: Set incoming policy to deny
+  community.general.ufw:
+    state: enabled
+    policy: deny
+    direction: incoming
+
+- name: Upgrade the system
+  apt:
+    update_cache: true
+    upgrade: dist
+  register: apt_cache
+  retries: 50
+  until: apt_cache is success
+
+# Install and configure fail2ban
+- name: Install fail2ban
+  apt:
+    pkg:
+      - fail2ban
+  
+- name: Copy fail2ban config
+  template:
+    src: jail.local.j2
+    dest: '/etc/fail2ban/jail.local'
+  notify:
+    - reload fail2ban
+
+# Install and configure sysstat
+- name: Install sysstat tools
+  apt:
+    pkg:
+      - sysstat
+
+- name: Copy sysstat default config
+  template:
+    src: sysstat.j2
+    dest: '/etc/default/sysstat'
+
+- name: Enable and start sysstat service
+  systemd:
+    name: sysstat
+    enabled: yes
+    state: started
+
+# Install and configure acct
+- name: Install accounting tools
+  apt:
+    pkg:
+      - acct
+
+- name: Initialize accounting
+  shell: |
+    /usr/sbin/accton on
+
+- name: Install additional tools
+  apt:
+    pkg:
+      - clamav-freshclam
+      - debsums
+      - apt-show-versions
+      - passwdqc
+      - aide

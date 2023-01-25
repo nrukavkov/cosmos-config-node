@@ -1,0 +1,9 @@
+- name: reload sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: reload fail2ban
+  service:
+    name: fail2ban
+    state: restarted

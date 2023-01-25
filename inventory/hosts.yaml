@@ -1,0 +1,33 @@
+---
+# yamllint disable rule:line-length
+all:
+  vars:
+    ansible_user: "{{ ansible_new_user }}"
+    ansible_public_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDujBl1ZqnjTyxokCwUo4YREKL+hxcPQdB+k4mS4Dzj9MzZr4ZsfhkjdMpYQY9CFk3V9WFE/copuOHXKYb2dP47A1VqEq2HLhyl8cHtikhQZ9rIQ03UIm/5YENvEkFHTaGS8ky5/irfIJFAnWJmbW7uinJKKfMwQfs63hEDM9DH4PHLNEKiNPAdzfMbKODDeio8PlqQwAy5s+zHmjM7DbhgOV5iv4uTNIJeom5hkgehoksM+rR2eWK39Nct2x9L3lw5ADec45rOORlrsC0v/nN6lf9cDVo3OxDslQztFyV+gyUifHXMU1+kEVnvmfyUPwwVqPWhrTgwQfFtToDxRh4l nicosha@Nikitas-MacBook-Pro.local"
+    ansible_port: "{{ ansible_new_port }}"
+    ansible_new_port: 22222
+    ansible_new_user: ansible
+    chain_version: v8.0.0-rc3
+    genesis_url: "https://github.com/cosmos/testnets/raw/master/public/genesis.json.gz"
+    chain_id: theta-testnet-001
+    chain_home_clear: false
+    node_unsafe_reset: true
+    chain_use_ssl_proxy: false
+    chain_api_host: "rest"
+    chain_rpc_host: "rpc"
+    chain_p2p_host: "p2p"
+    chain_grpc_host: "grpc"
+    p2p_seeds: "639d50339d7045436c756a042906b9a69970913f@seed-01.theta-testnet.polypore.xyz:26656,3e506472683ceb7ed75c1578d092c79785c27857@seed-02.theta-testnet.polypore.xyz:26656"
+    reboot: true
+    monitoring_prometheus: true
+    fail2ban_bantime: 10m
+    fail2ban_findtime: 10m
+    fail2ban_maxretry: 5
+    sysstat_enabled: "true"
+  children:
+    node:
+      hosts:
+        "65.109.164.134":
+          fast_sync: true
+          statesync_enabled: true
+          statesync_rpc_servers: 'https://rpc.state-sync-01.theta-testnet.polypore.xyz:443,https://rpc.state-sync-02.theta-testnet.polypore.xyz:443'
