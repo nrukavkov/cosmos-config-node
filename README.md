@@ -47,3 +47,37 @@ Install and configure Cosmos Node with node exporter monitoring
     ```
     ansible-playbook node.yml
     ```
+## Lynis 3.0.8 results
+
+<img width="620" alt="image" src="https://user-images.githubusercontent.com/54890287/214538043-221712e3-22ea-4975-85fc-5b231180ed21.png">
+
+## Todo:
+
+Add role for configure AIDE
+Add cron job for scheduled scanning using Lynis
+Configure password hashing rounds in /etc/login.defs
+Configure minimum password age in /etc/login.defs
+Disable drivers like USB storage when not used
+Enable logging to an external logging host for archiving purposes and additional protection
+When possible set expire dates for all password protected accounts
+
+Review and apply recommended values:
+
+```
+[+] Kernel Hardening
+------------------------------------
+    - Comparing sysctl key pairs with scan profile
+    - dev.tty.ldisc_autoload (exp: 0)                         [ DIFFERENT ]
+    - fs.protected_fifos (exp: 2)                             [ DIFFERENT ]
+    - fs.suid_dumpable (exp: 0)                               [ DIFFERENT ]
+    - kernel.kptr_restrict (exp: 2)                           [ DIFFERENT ]
+    - kernel.modules_disabled (exp: 1)                        [ DIFFERENT ]
+    - kernel.perf_event_paranoid (exp: 3)                     [ DIFFERENT ]
+    - kernel.sysrq (exp: 0)                                   [ DIFFERENT ]
+    - kernel.unprivileged_bpf_disabled (exp: 1)               [ DIFFERENT ]
+    - net.core.bpf_jit_harden (exp: 2)                        [ DIFFERENT ]
+    - net.ipv4.conf.all.log_martians (exp: 1)                 [ DIFFERENT ]
+    - net.ipv4.conf.all.rp_filter (exp: 1)                    [ DIFFERENT ]
+    - net.ipv4.conf.all.send_redirects (exp: 0)               [ DIFFERENT ]
+    - net.ipv4.conf.default.log_martians (exp: 1)             [ DIFFERENT ]
+```
