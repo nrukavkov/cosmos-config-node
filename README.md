@@ -53,13 +53,13 @@ Install and configure Cosmos Node with node exporter monitoring
 
 ## Todo:
 
-Add role for configure AIDE
-Add cron job for scheduled scanning using Lynis
-Configure password hashing rounds in /etc/login.defs
-Configure minimum password age in /etc/login.defs
-Disable drivers like USB storage when not used
-Enable logging to an external logging host for archiving purposes and additional protection
-When possible set expire dates for all password protected accounts
+i. Add role for configure AIDE
+i. Add cron job for scheduled scanning using Lynis
+i. Configure password hashing rounds in /etc/login.defs
+i. Configure minimum password age in /etc/login.defs
+i. Disable drivers like USB storage when not used
+i. Enable logging to an external logging host for archiving purposes and additional protection
+i. When possible set expire dates for all password protected accounts
 
 Review and apply recommended values:
 
