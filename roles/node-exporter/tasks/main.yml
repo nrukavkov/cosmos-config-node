@@ -71,10 +71,10 @@
     minute: "*/6"
     user: gaia
 
-- name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_TIME
+- name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_TIME_DIFF
   cron:
     name: monitoring-gaia-block-time
-    job: echo SYNC_INFO_LATEST_BLOCK_TIME $(TEST=`gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_time'` && echo $(date -d "$TEST" +%s)) > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_TIME.prom
+    job: echo SYNC_INFO_LATEST_BLOCK_TIME_DIFF $(BLOCKTIMESEC=$(date -d `gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_time' | sed 's/ *$//g'` +%s) && echo "$((`date +%s`-BLOCKTIMESEC))") > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_TIME_DIFF.prom
     minute: "*/7"
     user: gaia
 
