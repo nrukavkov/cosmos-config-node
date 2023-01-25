@@ -61,28 +61,28 @@
   cron:
     name: monitoring-gaia-disksize
     job: echo SIZE_FOLDER_GAIA{src=\"{{chain_home}}\"} $(du --max-depth=1 {{chain_home}} | tail -n 1 | awk '{print $1}') > /opt/node_exporter/textfiles/SIZE_FOLDER_GAIA.prom
-    minute: "*/1"
+    minute: "*/5"
     user: root
 
 - name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_HEIGHT
   cron:
     name: monitoring-gaia-block-height
     job: echo SYNC_INFO_LATEST_BLOCK_HEIGHT $(gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_height') > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_HEIGHT.prom
-    minute: "*/1"
+    minute: "*/6"
     user: gaia
 
 - name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_TIME
   cron:
     name: monitoring-gaia-block-time
     job: echo SYNC_INFO_LATEST_BLOCK_TIME $(TEST=`gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_time'` && echo $(date -d "$TEST" +%s)) > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_TIME.prom
-    minute: "*/1"
+    minute: "*/7"
     user: gaia
 
 - name: Install crontab for monitoring .gaia - SYNC_INFO_PEER_COUNT
   cron:
     name: monitoring-gaia-peer-count
     job: echo SYNC_INFO_PEER_COUNT $(curl -s "http://localhost:26657/net_info" | jq -r '.result.peers | length') > /opt/node_exporter/textfiles/SYNC_INFO_PEER_COUNT.prom
-    minute: "*/1"
+    minute: "*/8"
     user: gaia
 
 - name: Install node_exporter systemd service
