@@ -28,7 +28,7 @@ Install and configure Cosmos Node with node exporter monitoring
 
 1. Clone this repository
 2. Set up SSH access to the target machine
-3. Set you public key in `init.yml`
+3. Set you public key in `inventory/host.yaml`
 4. Open inventory/hosts.yaml and set your hostname/IP addreess:
 
     ```
