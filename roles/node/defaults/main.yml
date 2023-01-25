@@ -4,6 +4,7 @@ chain_binary_name: gaiad
 node_user: gaia
 node_user_home: "/home/{{node_user}}"
 chain_home: "{{node_user_home}}/.gaia"
+node_user_cron_folder: "/home/{{node_user}}/.cron"
 chain_home_clear: false
 node_unsafe_reset: false
 chain_version: v7.0.0

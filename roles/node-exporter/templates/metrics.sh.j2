@@ -1,0 +1,5 @@
+#!/bin/bash
+echo SYNC_INFO_PEER_COUNT $(curl -s "http://localhost:26657/net_info" | jq -r '.result.peers | length') > /opt/node_exporter/textfiles/SYNC_INFO_PEER_COUNT.prom
+echo SYNC_INFO_LATEST_BLOCK_HEIGHT $({{ cosmovisor_home }}/current/bin/gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_height' | sed 's/ *$//g') > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_HEIGHT.prom
+echo SYNC_INFO_LATEST_BLOCK_TIME $(BLOCKTIMESEC=$(date -d `{{ cosmovisor_home }}/current/bin/gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_time' | sed 's/ *$//g'` +%s) && echo "$((`date +%s`-BLOCKTIMESEC))")  > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_TIME.prom
+echo SYNC_INFO_PEER_COUNT $(curl -s "http://localhost:26657/net_info" | jq -r '.result.peers | length') > /opt/node_exporter/textfiles/SYNC_INFO_PEER_COUNT.prom

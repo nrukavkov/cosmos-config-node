@@ -57,32 +57,34 @@
     mode: '0770'
     recurse: yes
 
-- name: Install crontab for monitoring .gaia - SIZE_FOLDER_GAIA
+- name: Install crontab for monitoring .gaia
   cron:
-    name: monitoring-gaia-disksize
+    name: monitoring-gaia
     job: echo SIZE_FOLDER_GAIA{src=\"{{chain_home}}\"} $(du --max-depth=1 {{chain_home}} | tail -n 1 | awk '{print $1}') > /opt/node_exporter/textfiles/SIZE_FOLDER_GAIA.prom
     minute: "*/5"
     user: root
 
-- name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_HEIGHT
-  cron:
-    name: monitoring-gaia-block-height
-    job: echo SYNC_INFO_LATEST_BLOCK_HEIGHT $(gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_height') > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_HEIGHT.prom
-    minute: "*/6"
-    user: gaia
+- name: Create gaia cron directory
+  file:
+    path: "{{node_user_cron_folder}}"
+    state: directory
+    mode: '0700'
+    owner: '{{node_user}}'
+    group: '{{node_user}}'
 
-- name: Install crontab for monitoring .gaia - SYNC_INFO_LATEST_BLOCK_TIME_DIFF
-  cron:
-    name: monitoring-gaia-block-time
-    job: echo SYNC_INFO_LATEST_BLOCK_TIME_DIFF $(BLOCKTIMESEC=$(date -d `gaiad status 2>&1 | jq -r '.SyncInfo.latest_block_time' | sed 's/ *$//g'` +%s) && echo "$((`date +%s`-BLOCKTIMESEC))") > /opt/node_exporter/textfiles/SYNC_INFO_LATEST_BLOCK_TIME_DIFF.prom
-    minute: "*/7"
-    user: gaia
+- name: Copy custom metrics script
+  template:
+    src: metrics.sh.j2
+    dest: '{{node_user_cron_folder}}/metrics.sh'
+    owner: '{{node_user}}'
+    group: '{{node_user}}'
+    mode: '0700'
 
-- name: Install crontab for monitoring .gaia - SYNC_INFO_PEER_COUNT
+- name: Install crontab for custom metrics
   cron:
-    name: monitoring-gaia-peer-count
-    job: echo SYNC_INFO_PEER_COUNT $(curl -s "http://localhost:26657/net_info" | jq -r '.result.peers | length') > /opt/node_exporter/textfiles/SYNC_INFO_PEER_COUNT.prom
-    minute: "*/8"
+    name: monitoring-gaia-custom-metrics
+    job: "{{node_user_cron_folder}}/metrics.sh"
+    minute: "*/1"
     user: gaia
 
 - name: Install node_exporter systemd service
