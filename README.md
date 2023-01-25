@@ -31,16 +31,19 @@ Install and configure Cosmos Node with node exporter monitoring
 3. Set you public key in `init.yml`
 4. Open inventory/hosts.yaml and set your hostname/IP addreess:
 
-  `children:
-    node:
-      hosts:
-        "65.109.164.134":`
+    ```
+    children:
+      node:
+        hosts:
+          "65.109.164.134":
+    ```
 
 5. Run the init playbook. This playbook make a base secure settings for ssh, create user `ansible` with public key and will change ssh port to 22222.
-   ```
-   ansible-playbook init.yml -e 'ansible_user=root' -e 'ansible_port=22' --ask-pass
-   ```
+    ```
+    ansible-playbook init.yml -e 'ansible_user=root' -e 'ansible_port=22' --ask-pass
+    ```
 6. Run node playbook for installing and configuing node. Additionally this playbook installs node-exporter with additional gaiad metrics.
-   ```
-   ansible-playbook node.yml
-   ```
+
+    ```
+    ansible-playbook node.yml
+    ```
