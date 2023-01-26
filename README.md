@@ -1,6 +1,6 @@
 # Ansible Cosmos Node
 
-An Ansible toolkit for secure host and installing cosmos node. This toolkit based on https://github.com/hyphacoop/cosmos-ansible.
+An Ansible toolkit for secure host and installing Cosmos Node. This toolkit is based on https://github.com/hyphacoop/cosmos-ansible.
 
 ## Requirements 
 
@@ -13,7 +13,7 @@ An Ansible toolkit for secure host and installing cosmos node. This toolkit base
 
 Install and configure new server. Init.yaml contains roles like:
 
-- `ssh-secure` - main security module installs and configure system tools for imoroving secutity. It changes default 22 port to 22222, installing fail2ban, mailware detection tool, acct and monitoring tools. You can change default ssh port to another in `inventory/hosts.yaml`.
+- `ssh-secure` - main security module that installs and configure system tools for improving security. It changes default 22 port to 22222, installing fail2ban, mailware detection tool, acct and monitoring tools. You can change default ssh port to another in `inventory/hosts.yaml`.
 - `ssh-permissions` - add new users to server. 
 
 ### node.yml
